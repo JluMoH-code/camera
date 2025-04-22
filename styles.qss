@@ -1,0 +1,136 @@
+/* Основные цвета */
+:root {
+    primary-color: #2196F3;
+    secondary-color: #1976D2;
+    background-color: #2E2E2E;
+    text-color: #FFFFFF;
+    button-hover: #1565C0;
+    button-pressed: #0D47A1;
+}
+
+QMainWindow {
+    top: 30px;
+    background-color: #2E2E2E;
+    color: #FFFFFF;
+}
+
+/* Виджет с видео */
+QWidget#videoWidget {
+    background-color: black;
+    border: 2px solid #2196F3;
+    border-radius: 5px;
+}
+
+/* Общие стили кнопок */
+QPushButton {
+    min-width: 120px;
+    min-height: 40px;
+    padding: 8px;
+    font-size: 14px;
+    font-family: 'Segoe UI', Arial;
+    border: none;
+    border-radius: 4px;
+    background-color: #2196F3;
+    color: #FFFFFF;
+}
+
+QPushButton:hover {
+    background-color: #1976D2;
+    border: 1px solid #1565C0;
+}
+
+QPushButton:pressed {
+    background-color: #0D47A1;
+}
+
+/* Специальные кнопки */
+#controlPanel QPushButton {
+    background-color: #4CAF50;
+}
+
+#controlPanel QPushButton:hover {
+    background-color: #45a049;
+}
+
+#emergencyButton {
+    background-color: #F44336;
+}
+
+#emergencyButton:hover {
+    background-color: #D32F2F;
+}
+
+/* Заголовки */
+QLabel#title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2196F3;
+    padding: 10px;
+}
+
+QLabel#statusLabel {
+    font-size: 14px;
+    color: #FFA500;
+    padding: 6px;
+    border: 1px solid #FFA500;
+    border-radius: 4px;
+    background-color: rgba(255, 165, 0, 0.1);
+}
+
+/* Панель статуса */
+QStatusBar {
+    background-color: #1A1A1A;
+    color: #FFFFFF;
+    padding: 5px;
+}
+
+/* Группы элементов */
+QGroupBox {
+    border: 1px solid #2196F3;
+    border-radius: 5px;
+    margin-top: 18px;
+    padding-top: 10px;
+    font-size: 16px;
+    color: #2196F3;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    left: 10px;
+    top: 8px;
+}
+
+/* Слайдеры */
+QSlider::groove:horizontal {
+    height: 8px;
+    background: #404040;
+    border-radius: 4px;
+}
+
+QSlider::handle:horizontal {
+    width: 18px;
+    margin: -6px 0;
+    background: #2196F3;
+    border-radius: 9px;
+}
+
+/* Стили для VideoWidget */
+VideoWidget QLabel#videoStatusLabel {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+}
+
+VideoWidget QPushButton#retryButton {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+VideoWidget QPushButton#retryButton:hover {
+    background-color: #45a049;
+}

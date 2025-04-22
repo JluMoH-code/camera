@@ -2,44 +2,77 @@ import cv2
 import threading
 
 class ThreadedCamera:
-    def __init__(self, source):
+    def __init__(self, source, timeout=5):
         self.source = source
-        self.capture = cv2.VideoCapture(self.source)
-        if not self.capture.isOpened():
-            raise ValueError(f"Ошибка: Не удалось открыть видеоисточник {self.source}")
-
-        self.grabbed, self.frame = self.capture.read()
+        self.timeout = timeout
+        self.capture = None
+        self.last_frame = None
         self.lock = threading.Lock()
         self.stopped = False
-        self.thread = threading.Thread(target=self.update, args=(), daemon=True) # daemon=True позволяет завершить программу, даже если поток еще работает
+        self.connected = False
+        self.thread = None
+        self.read_thread = None
 
     def start(self):
-        print("Запуск потока чтения камеры...")
+        if not self.stopped:
+            self.stop()
+        print("Попытка подключения к камере...")
         self.stopped = False
-        self.thread.start()
+        self.connect_thread = threading.Thread(target=self.try_connect, daemon=True)
+        self.connect_thread.start()
         return self
 
+    def try_connect(self):
+        try:
+            self.capture = cv2.VideoCapture(self.source)
+            
+            # Таймер для прерывания подключения
+            timer = threading.Timer(self.timeout, self.stop_connection)
+            timer.start()
+            
+            if self.capture.isOpened():
+                self.connected = True
+                print("Подключение успешно")
+                self.read_thread = threading.Thread(target=self.update, daemon=True)
+                self.read_thread.start()
+            else:
+                raise ConnectionError("Не удалось открыть поток")
+                
+        except Exception as e:
+            print(f"Ошибка подключения: {str(e)}")
+            self.stop()
+        finally:
+            timer.cancel()
+
+    def stop_connection(self):
+        if not self.connected:
+            print(f"Таймаут подключения ({self.timeout} сек.)")
+            self.stop()
+
     def update(self):
-        print("Поток чтения запущен.")
-        while not self.stopped:
+        print("Чтение потока начато")
+        while not self.stopped and self.connected:
             grabbed, frame = self.capture.read()
             if not grabbed:
-                
-                print("Поток чтения: кадр не получен, остановка.")
-                self.stop() 
+                print("Потеря соединения с камерой")
+                self.stop()
                 break
-            
+                
             with self.lock:
-                self.grabbed = grabbed
-                self.frame = frame
-        print("Поток чтения остановлен.")
-        self.capture.release() 
+                self.last_frame = frame.copy()
+
+        print("Поток чтения остановлен")
+        if self.capture:
+            self.capture.release()
 
     def read(self):
         with self.lock:
-            frame = self.frame.copy() if self.grabbed and self.frame is not None else None
-        return frame
+            return self.last_frame if self.last_frame is not None else None
 
     def stop(self):
-        print("Остановка потока чтения камеры...")
-        self.stopped = True
+        print("Остановка камеры...")
+        if not self.stopped:
+            self.stopped = True
+            self.connected = False
+            if self.capture:
+                self.capture.release()
