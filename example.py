@@ -71,7 +71,7 @@ while True:
 		print(response)
 			
 	elif key == ord("p"):
-		response = commandManager.base_command("record-video")
+		response = commandManager.base_command("take-picture")
 		print(response)
 			
 	elif key == ord("q"):
